@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🎂🥳</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+</head>
+<body class="birthday-reveal">
+    <div class="floating-bg"></div>
+
+    <!-- Section 1: Title + GIF -->
+    <section class="reveal-section hero-section">
+        <h1 class="yes-title"><span class="emoji">🎂</span> Happy Birthday, Babe! <span class="emoji">🎂</span></h1>
+        <div class="gif-container">
+            <img id="cute-gif" src="https://media.tenor.com/eNHbizSfVb0AAAAj/lovemode-cute.gif" alt="celebrating">
+        </div>
+        <p class="scroll-hint">Scroll down for your surprise ↓</p>
+    </section>
+
+    <!-- Section 2: Photo Slideshow -->
+    <section class="reveal-section photos-section">
+        <h2 class="section-title">Our memories together 💫</h2>
+
+        <div class="slideshow">
+            <button class="slide-nav slide-prev" id="slide-prev" title="Previous">‹</button>
+            <button class="slide-nav slide-next" id="slide-next" title="Next">›</button>
+            <div class="slideshow-frame">
+                <div class="polaroid active" data-index="0">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 1.jpeg" alt="Memory 1">
+                    </div>
+                    <p class="polaroid-caption">Our first adventure together 💕</p>
+                </div>
+                <div class="polaroid" data-index="1">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 2.jpeg" alt="Memory 2">
+                    </div>
+                    <p class="polaroid-caption">That day we couldn't stop laughing 😂</p>
+                </div>
+                <div class="polaroid" data-index="2">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 3.jpeg" alt="Memory 3">
+                    </div>
+                    <p class="polaroid-caption">You looked so beautiful here ✨</p>
+                </div>
+                <div class="polaroid" data-index="3">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 4.jpeg" alt="Memory 4">
+                    </div>
+                    <p class="polaroid-caption">My favorite photo of us 🥰</p>
+                </div>
+                <div class="polaroid" data-index="4">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 5.jpeg" alt="Memory 5">
+                    </div>
+                    <p class="polaroid-caption">Every moment with you is special 💖</p>
+                </div>
+                <div class="polaroid" data-index="5">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 6.jpeg" alt="Memory 6">
+                    </div>
+                    <p class="polaroid-caption">I could relive this day forever 🌟</p>
+                </div>
+                <div class="polaroid" data-index="6">
+                    <div class="polaroid-img">
+                        <img src="img/IMG 7.jpeg" alt="Memory 7">
+                    </div>
+                    <p class="polaroid-caption">You and me, always 💖</p>
+                </div>
+            </div>
+
+            <!-- Dots navigation -->
+            <div class="slideshow-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+                <span class="dot" data-index="4"></span>
+                <span class="dot" data-index="5"></span>
+                <span class="dot" data-index="6"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Birthday letter -->
+    <section class="reveal-section letter-section">
+        <div class="letter-card">
+            <h2 class="letter-title">A little letter for you 💌</h2>
+            <div class="letter-body">
+                <p>I just wanted to tell you...</p>
+                <p>You're the most amazing person in my life 💕</p>
+                <p>Thank you for being born into this world, and for letting me be a part of your journey. 🌟</p>
+                <p>Here's to another year of us — more laughs, more adventures, and more love. 🥰</p>
+                <p class="letter-sign"><strong>I love you so much! 💖🎂🎉</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <audio id="bg-music" loop>
+        <source src="music/beabadoobee - Glue Song (Lyrics).mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="music-toggle" onclick="toggleMusic()" title="Toggle music">🔊</button>
+
+    <script src="yes-script.js"></script>
+    <script src="particles.js"></script>
+</body>
+</html>
