@@ -28,19 +28,23 @@ window.addEventListener('load', () => {
 
 function launchConfetti() {
     const colors = ['#FFD700', '#FF6B6B', '#A855F7', '#06B6D4', '#FF85A2', '#FFA500', '#fff', '#F472B6']
+    const isMobile = window.innerWidth < 600
 
-    // Initial big burst
+    // Initial big burst (smaller on mobile)
     confetti({
-        particleCount: 200,
-        spread: 120,
+        particleCount: isMobile ? 80 : 200,
+        spread: isMobile ? 80 : 120,
         origin: { x: 0.5, y: 0.3 },
         colors
     })
 
-    // Continuous side cannons — loops forever
+    // Continuous side cannons — less frequent and fewer on mobile
+    const count = isMobile ? 10 : 25
+    const interval = isMobile ? 700 : 400
+
     setInterval(() => {
         confetti({
-            particleCount: 25,
+            particleCount: count,
             angle: 60,
             spread: 55,
             origin: { x: 0, y: 0.6 },
@@ -48,13 +52,13 @@ function launchConfetti() {
         })
 
         confetti({
-            particleCount: 25,
+            particleCount: count,
             angle: 120,
             spread: 55,
             origin: { x: 1, y: 0.6 },
             colors
         })
-    }, 400)
+    }, interval)
 }
 
 // --- Slideshow ---
@@ -89,6 +93,35 @@ function startSlideshow() {
             goToSlide(next, polaroids, dots)
             resetAutoSlide(polaroids, dots)
         })
+    }
+
+    // Swipe gesture for mobile
+    const frame = document.querySelector('.slideshow-frame')
+    if (frame) {
+        let touchStartX = 0
+        let touchEndX = 0
+
+        frame.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX
+        }, { passive: true })
+
+        frame.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX
+            const diff = touchStartX - touchEndX
+
+            if (Math.abs(diff) > 50) { // minimum swipe distance
+                if (diff > 0) {
+                    // Swiped left → next
+                    const next = (currentSlide + 1) % polaroids.length
+                    goToSlide(next, polaroids, dots)
+                } else {
+                    // Swiped right → prev
+                    const prev = (currentSlide - 1 + polaroids.length) % polaroids.length
+                    goToSlide(prev, polaroids, dots)
+                }
+                resetAutoSlide(polaroids, dots)
+            }
+        }, { passive: true })
     }
 
     // Auto-cycle every 4 seconds

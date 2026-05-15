@@ -9,10 +9,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Welcome splash screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-envelope">👀</div>
+            <h2 class="splash-title">Psst... hey you</h2>
+            <p class="splash-subtitle">Someone left you a little something</p>
+            <button id="splash-btn" class="splash-btn">Come in ✨</button>
+        </div>
+    </div>
+
     <div class="floating-bg"></div>
 
-    <div class="container">
-        <h1>Hey babe, I have something for you... 🎁</h1>
+    <div class="container" style="display: none;" id="main-content">
+        <h1>Guess what day it is...? 🎂</h1>
 
         <div class="gif-container">
             <img id="cute-gif" src="https://media.tenor.com/EBV7OT7ACfwAAAAj/u-u-qua-qua-u-quaa.gif" alt="cute character">
@@ -25,11 +35,11 @@
         <div id="tease-toast"></div>
     </div>
 
-    <audio id="bg-music" loop autoplay muted>
+    <audio id="bg-music" loop>
         <source src="music/beabadoobee - Glue Song (Lyrics).mp3" type="audio/mpeg">
     </audio>
 
-    <button id="music-toggle" onclick="toggleMusic()" title="Toggle music">🔊</button>
+    <button id="music-toggle" onclick="toggleMusic()" title="Toggle music" style="display: none;">🔊</button>
 
     <script src="script.js"></script>
     <script src="particles.js"></script>

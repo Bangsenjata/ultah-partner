@@ -54,17 +54,26 @@ const yesBtn = document.getElementById('yes-btn')
 const noBtn = document.getElementById('no-btn')
 const music = document.getElementById('bg-music')
 
-// Autoplay: audio starts muted (bypasses browser policy), unmute immediately
-music.muted = true
-music.volume = 0.3
-music.play().then(() => {
+// Splash screen — user taps to enter, which allows music to play
+document.getElementById('splash-btn').addEventListener('click', () => {
+    const splash = document.getElementById('splash-screen')
+    splash.classList.add('splash-exit')
+
+    // Start music (browser allows it because this is a real user gesture)
+    music.volume = 0.3
     music.muted = false
-}).catch(() => {
-    // Fallback: unmute on first interaction
-    document.addEventListener('click', () => {
-        music.muted = false
-        music.play().catch(() => {})
-    }, { once: true })
+    music.play().catch(() => {})
+    musicPlaying = true
+    document.getElementById('music-toggle').textContent = '🔊'
+
+    // Show main content and music toggle
+    document.getElementById('main-content').style.display = ''
+    document.getElementById('music-toggle').style.display = ''
+
+    // Remove splash after animation
+    setTimeout(() => {
+        splash.remove()
+    }, 800)
 })
 
 function toggleMusic() {
@@ -109,12 +118,14 @@ function handleNoClick() {
     const msgIndex = Math.min(noClickCount, noMessages.length - 1)
     noBtn.textContent = noMessages[msgIndex]
 
-    // Grow the Yes button bigger each time
+    // Grow the Yes button bigger each time (capped for mobile)
     const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize)
-    yesBtn.style.fontSize = `${currentSize * 1.2}px`
-    const padY = Math.min(18 + noClickCount * 3, 45)
-    const padX = Math.min(45 + noClickCount * 6, 90)
+    const maxFontSize = window.innerWidth < 600 ? 28 : 48
+    yesBtn.style.fontSize = `${Math.min(currentSize * 1.2, maxFontSize)}px`
+    const padY = Math.min(18 + noClickCount * 3, 35)
+    const padX = Math.min(45 + noClickCount * 6, window.innerWidth < 600 ? 50 : 90)
     yesBtn.style.padding = `${padY}px ${padX}px`
+    yesBtn.style.maxWidth = '90vw'
 
     // Shrink No button to contrast
     if (noClickCount >= 2) {

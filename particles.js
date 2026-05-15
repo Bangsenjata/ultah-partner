@@ -3,6 +3,7 @@
     const container = document.querySelector('.floating-bg')
     if (!container) return
 
+    const isMobile = window.innerWidth < 600
     const emojis = ['🎈', '✨', '🎁', '⭐', '🎂', '🎉', '🎀', '🥳', '💫', '🎊', '🧁', '🍰']
     const sparkleColors = ['#FFD700', '#A855F7', '#06B6D4', '#FF6B6B', '#F472B6', '#FFA500', '#fff']
     const orbColors = [
@@ -19,7 +20,7 @@
         el.className = 'float-particle'
         el.textContent = emojis[Math.floor(Math.random() * emojis.length)]
         el.style.left = Math.random() * 100 + '%'
-        el.style.fontSize = (0.8 + Math.random() * 1.4) + 'rem'
+        el.style.fontSize = (0.8 + Math.random() * (isMobile ? 0.8 : 1.4)) + 'rem'
         el.style.opacity = 0.15 + Math.random() * 0.2
 
         const duration = 10 + Math.random() * 12
@@ -32,13 +33,14 @@
         setTimeout(() => el.remove(), (duration + 3) * 1000)
     }
 
-    // Spawn initial batch
-    for (let i = 0; i < 15; i++) {
+    // Spawn initial batch (fewer on mobile)
+    const initialEmojis = isMobile ? 6 : 15
+    for (let i = 0; i < initialEmojis; i++) {
         setTimeout(() => spawnEmoji(), Math.random() * 4000)
     }
 
-    // Keep spawning
-    setInterval(spawnEmoji, 1200)
+    // Keep spawning (slower on mobile)
+    setInterval(spawnEmoji, isMobile ? 3000 : 1200)
 
     // --- Sparkle dots ---
     function spawnSparkle() {
@@ -61,13 +63,14 @@
         setTimeout(() => el.remove(), (duration + 3) * 1000)
     }
 
-    // Spawn initial batch of sparkles
-    for (let i = 0; i < 20; i++) {
+    // Spawn initial batch of sparkles (fewer on mobile)
+    const initialSparkles = isMobile ? 8 : 20
+    for (let i = 0; i < initialSparkles; i++) {
         setTimeout(() => spawnSparkle(), Math.random() * 3000)
     }
 
-    // Keep spawning sparkles
-    setInterval(spawnSparkle, 600)
+    // Keep spawning sparkles (slower on mobile)
+    setInterval(spawnSparkle, isMobile ? 1500 : 600)
 
     // --- Glowing orbs (static, ambient) ---
     const orbPositions = [

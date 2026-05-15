@@ -18,6 +18,180 @@ body {
         radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 60%);
 }
 
+/* ===== Splash / Welcome Screen ===== */
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: radial-gradient(ellipse at center, #1a1033 0%, #0d0618 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    overflow: hidden;
+}
+
+/* Twinkling stars */
+.splash-screen::before,
+.splash-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    box-shadow:
+        /* Top area */
+        5vw 5vh 0 1px rgba(255,255,255,0.6),
+        18vw 8vh 0 0 rgba(244,114,182,0.5),
+        35vw 3vh 0 1px rgba(255,255,255,0.5),
+        52vw 7vh 0 0 rgba(168,85,247,0.5),
+        70vw 4vh 0 1px rgba(255,255,255,0.4),
+        88vw 9vh 0 0 rgba(255,215,0,0.4),
+        /* Upper-mid */
+        3vw 22vh 0 1px rgba(168,85,247,0.5),
+        22vw 18vh 0 0 rgba(255,255,255,0.5),
+        42vw 25vh 0 1px rgba(244,114,182,0.4),
+        58vw 20vh 0 0 rgba(255,255,255,0.6),
+        78vw 16vh 0 1px rgba(255,215,0,0.5),
+        95vw 24vh 0 0 rgba(255,255,255,0.4),
+        /* Mid */
+        8vw 38vh 0 0 rgba(255,255,255,0.5),
+        28vw 42vh 0 1px rgba(244,114,182,0.5),
+        48vw 35vh 0 0 rgba(168,85,247,0.4),
+        68vw 40vh 0 1px rgba(255,255,255,0.6),
+        85vw 37vh 0 0 rgba(255,215,0,0.4),
+        /* Lower-mid */
+        6vw 58vh 0 1px rgba(244,114,182,0.5),
+        25vw 55vh 0 0 rgba(255,255,255,0.5),
+        45vw 62vh 0 1px rgba(168,85,247,0.5),
+        62vw 56vh 0 0 rgba(255,255,255,0.4),
+        82vw 60vh 0 1px rgba(255,215,0,0.5),
+        92vw 53vh 0 0 rgba(255,255,255,0.5),
+        /* Bottom */
+        10vw 75vh 0 0 rgba(255,255,255,0.6),
+        30vw 80vh 0 1px rgba(244,114,182,0.4),
+        50vw 72vh 0 0 rgba(168,85,247,0.5),
+        72vw 78vh 0 1px rgba(255,255,255,0.5),
+        90vw 74vh 0 0 rgba(255,215,0,0.4),
+        /* Very bottom */
+        15vw 90vh 0 1px rgba(255,255,255,0.4),
+        40vw 92vh 0 0 rgba(168,85,247,0.5),
+        60vw 88vh 0 1px rgba(244,114,182,0.5),
+        80vw 93vh 0 0 rgba(255,255,255,0.5);
+    animation: twinkle 3s ease-in-out infinite;
+}
+
+.splash-screen::after {
+    width: 2px;
+    height: 2px;
+    box-shadow:
+        12vw 12vh 0 1px rgba(255,255,255,0.5),
+        32vw 15vh 0 0 rgba(168,85,247,0.4),
+        55vw 10vh 0 1px rgba(244,114,182,0.5),
+        75vw 12vh 0 0 rgba(255,255,255,0.4),
+        93vw 15vh 0 1px rgba(255,215,0,0.4),
+        2vw 30vh 0 0 rgba(255,255,255,0.5),
+        20vw 33vh 0 1px rgba(244,114,182,0.4),
+        38vw 28vh 0 0 rgba(255,255,255,0.6),
+        55vw 32vh 0 1px rgba(168,85,247,0.5),
+        73vw 27vh 0 0 rgba(255,215,0,0.5),
+        88vw 30vh 0 1px rgba(255,255,255,0.4),
+        5vw 48vh 0 0 rgba(168,85,247,0.5),
+        18vw 45vh 0 1px rgba(255,255,255,0.5),
+        38vw 50vh 0 0 rgba(244,114,182,0.4),
+        56vw 47vh 0 1px rgba(255,255,255,0.5),
+        75vw 52vh 0 0 rgba(255,215,0,0.4),
+        92vw 48vh 0 1px rgba(255,255,255,0.5),
+        8vw 68vh 0 0 rgba(244,114,182,0.5),
+        28vw 65vh 0 1px rgba(255,255,255,0.4),
+        48vw 70vh 0 0 rgba(168,85,247,0.4),
+        65vw 66vh 0 1px rgba(255,255,255,0.6),
+        85vw 68vh 0 0 rgba(255,215,0,0.5),
+        15vw 85vh 0 1px rgba(255,255,255,0.5),
+        35vw 88vh 0 0 rgba(168,85,247,0.5),
+        55vw 82vh 0 1px rgba(244,114,182,0.4),
+        75vw 86vh 0 0 rgba(255,255,255,0.4),
+        95vw 90vh 0 1px rgba(255,215,0,0.5);
+    animation: twinkle 3s ease-in-out 1.5s infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.splash-screen.splash-exit {
+    opacity: 0;
+    transform: scale(1.1);
+    pointer-events: none;
+}
+
+.splash-content {
+    text-align: center;
+    animation: splashFadeIn 1.2s ease both;
+}
+
+.splash-envelope {
+    font-size: 5rem;
+    animation: envelopeFloat 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(244, 114, 182, 0.4));
+}
+
+@keyframes envelopeFloat {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-18px) rotate(3deg); }
+}
+
+.splash-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 24px 0 8px;
+    letter-spacing: 0.5px;
+}
+
+.splash-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 600;
+    margin-bottom: 36px;
+}
+
+.splash-btn {
+    background: linear-gradient(135deg, #F472B6, #A855F7);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    padding: 16px 48px;
+    cursor: pointer;
+    box-shadow: 0 6px 30px rgba(168, 85, 247, 0.4);
+    animation: splashPulse 2s ease-in-out infinite;
+    transition: transform 0.15s;
+}
+
+.splash-btn:hover {
+    transform: scale(1.08);
+}
+
+.splash-btn:active {
+    transform: scale(0.96);
+}
+
+@keyframes splashPulse {
+    0%, 100% { box-shadow: 0 6px 30px rgba(168, 85, 247, 0.4); }
+    50% { box-shadow: 0 8px 50px rgba(244, 114, 182, 0.6); }
+}
+
+@keyframes splashFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Birthday reveal page gets a special warm glow */
 body.birthday-reveal {
     background-color: #1a0f2e;
@@ -308,6 +482,7 @@ body.birthday-reveal {
     padding: 60px 20px;
     position: relative;
     z-index: 1;
+    overflow: hidden;
 }
 
 /* Hero section */
@@ -550,26 +725,176 @@ body.birthday-reveal {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Mobile adjustments */
+/* ===== Mobile Responsive ===== */
 @media (max-width: 600px) {
+
+    /* Splash screen */
+    .splash-envelope {
+        font-size: 3.5rem;
+    }
+
+    .splash-title {
+        font-size: 1.3rem;
+    }
+
+    .splash-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 28px;
+    }
+
+    .splash-btn {
+        font-size: 1rem;
+        padding: 14px 36px;
+    }
+
+    /* Main page */
+    .container {
+        padding: 30px 16px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 14px;
+    }
+
+    #cute-gif {
+        width: 150px;
+        height: 150px;
+    }
+
+    .buttons {
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    #yes-btn {
+        font-size: 1.2rem;
+        padding: 14px 32px;
+        max-width: 85vw;
+    }
+
+    #no-btn {
+        font-size: 0.85rem;
+        padding: 10px 22px;
+    }
+
+    #music-toggle {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+        bottom: 14px;
+        right: 14px;
+    }
+
+    /* Birthday reveal page */
+    .reveal-section {
+        padding: 40px 16px;
+    }
+
+    .hero-section {
+        padding-top: 60px;
+    }
+
     .yes-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+    }
+
+    .hero-section #cute-gif {
+        width: 160px;
+        height: 160px;
+    }
+
+    .scroll-hint {
+        font-size: 0.85rem;
+        margin-top: 28px;
     }
 
     .section-title {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 24px;
     }
 
+    /* Slideshow */
     .slideshow {
-        max-width: 90vw;
-    }
-
-    .letter-card {
-        padding: 28px 22px;
+        max-width: 80vw;
+        overflow: visible;
     }
 
     .polaroid {
-        padding: 10px 10px 48px 10px;
+        padding: 6px 6px 34px 6px;
+    }
+
+    .polaroid-caption {
+        font-size: 0.85rem;
+        bottom: 6px;
+        left: 8px;
+        right: 8px;
+    }
+
+    /* Move nav buttons closer but still outside on mobile */
+    .slide-nav {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    .slide-prev {
+        left: -38px;
+    }
+
+    .slide-next {
+        right: -38px;
+    }
+
+    /* Letter */
+    .letter-card {
+        padding: 24px 18px;
+    }
+
+    .letter-title {
+        font-size: 1.3rem;
+    }
+
+    .letter-body p {
+        font-size: 0.95rem;
+    }
+
+    .letter-body .letter-sign strong {
+        font-size: 1.1rem;
+    }
+
+    /* Collage background - fewer columns on mobile */
+    .collage-grid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 120px;
     }
 }
 
+/* Extra small screens (older/smaller phones) */
+@media (max-width: 380px) {
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    .yes-title {
+        font-size: 1.3rem;
+    }
+
+    #yes-btn {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+
+    .slide-prev {
+        left: -36px;
+    }
+
+    .slide-next {
+        right: -36px;
+    }
+
+    .slideshow {
+        max-width: 85vw;
+    }
+}
