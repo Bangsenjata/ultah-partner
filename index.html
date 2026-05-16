@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I have something for you... 🎁</title>
+    <title>ada sesuatu buat kamu... 🎁</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -11,26 +11,36 @@
 <body>
     <!-- Welcome splash screen -->
     <div id="splash-screen" class="splash-screen">
+        <div class="lily-ornament lily-top-left"></div>
+        <div class="lily-ornament lily-top-right"></div>
+        <div class="lily-ornament lily-bottom-left"></div>
+        <div class="lily-ornament lily-bottom-right"></div>
         <div class="splash-content">
             <div class="splash-envelope">👀</div>
-            <h2 class="splash-title">Psst... hey you</h2>
-            <p class="splash-subtitle">Someone left you a little something</p>
-            <button id="splash-btn" class="splash-btn">Come in ✨</button>
+            <h2 class="splash-title">Psst... sayang🥰</h2>
+            <p class="splash-subtitle">adaa sesuatu nih buat kamu..</p>
+            <button id="splash-btn" class="splash-btn">Sinii ✨</button>
         </div>
     </div>
 
     <div class="floating-bg"></div>
 
+    <!-- Lily ornaments for main page -->
+    <div class="lily-ornament lily-top-left lily-main"></div>
+    <div class="lily-ornament lily-top-right lily-main"></div>
+    <div class="lily-ornament lily-bottom-left lily-main"></div>
+    <div class="lily-ornament lily-bottom-right lily-main"></div>
+
     <div class="container" style="display: none;" id="main-content">
-        <h1>Guess what day it is...? 🎂</h1>
+        <h1>Coba tebak ini hari apaa..? 🎂</h1>
 
         <div class="gif-container">
             <img id="cute-gif" src="https://media.tenor.com/EBV7OT7ACfwAAAAj/u-u-qua-qua-u-quaa.gif" alt="cute character">
         </div>
 
         <div class="buttons">
-            <button id="yes-btn" onclick="handleYesClick()">Open it! 🎉</button>
-            <button id="no-btn" onclick="handleNoClick()">Nah, maybe later</button>
+            <button id="yes-btn" onclick="handleYesClick()">Buka Dong! 🎉</button>
+            <button id="no-btn" onclick="handleNoClick()">Nanti aja dehh</button>
         </div>
         <div id="tease-toast"></div>
     </div>

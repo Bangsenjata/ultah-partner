@@ -4,13 +4,13 @@
     if (!container) return
 
     const isMobile = window.innerWidth < 600
-    const emojis = ['🎈', '✨', '🎁', '⭐', '🎂', '🎉', '🎀', '🥳', '💫', '🎊', '🧁', '🍰']
-    const sparkleColors = ['#FFD700', '#A855F7', '#06B6D4', '#FF6B6B', '#F472B6', '#FFA500', '#fff']
+    const emojis = ['🌸', '✨', '🎁', '⭐', '🎂', '🎉', '🎀', '🥳', '💫', '🌷', '🧁', '💖', '🌺']
+    const sparkleColors = ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#FFC0CB', '#F472B6', '#fff']
     const orbColors = [
-        'rgba(168, 85, 247, 0.12)',
-        'rgba(255, 215, 0, 0.1)',
-        'rgba(6, 182, 212, 0.1)',
-        'rgba(255, 107, 107, 0.08)',
+        'rgba(219, 112, 147, 0.12)',
+        'rgba(255, 105, 180, 0.1)',
+        'rgba(255, 182, 193, 0.1)',
+        'rgba(199, 21, 133, 0.08)',
         'rgba(244, 114, 182, 0.1)'
     ]
 

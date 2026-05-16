@@ -1,3 +1,4 @@
+// === GIF stages ===
 const gifStages = [
     "https://media.tenor.com/EBV7OT7ACfwAAAAj/u-u-qua-qua-u-quaa.gif",    // 0 normal excited
     "https://media1.tenor.com/m/uDugCXK4vI4AAAAd/chiikawa-hachiware.gif",  // 1 confused
@@ -9,70 +10,78 @@ const gifStages = [
     "https://media1.tenor.com/m/uDugCXK4vI4AAAAC/chiikawa-hachiware.gif"  // 7 crying
 ]
 
+// === Phase 1: Yes button runs away ===
+const yesRunawayMessages = [
+    "Buka Dong! 🎉",
+    "Hehe, belum boleh~ 😜",
+    "Tangkep dulu dong! 💨",
+    "Nggak semudah itu! 🏃‍♀️",
+    "Coba lagi~ hampir dapet! 🎯",
+    "Sabar yaa... 😏",
+    "Eits, mau kemana? 😝",
+    "Coba klik yang lain dulu! 👀",
+    "Sini sini... eh kabur lagi! ⚡",
+    "Masih nyoba? Semangat! 💪"
+]
+
+// === Phase 2: No button messages ===
 const noMessages = [
-    "Nah, maybe later",
-    "Are you sure? 🤔",
-    "But I worked so hard on this... 🥺",
-    "Come on, just open it! 🎁",
-    "It's your BIRTHDAY though... 🎂",
-    "You're really gonna leave me hanging? 😢",
-    "I'll be so sad if you don't open it... 💔",
-    "PLEASE??? It's special! 😭",
-    "You can't escape your birthday surprise 😜"
+    "Nanti aja dehh",
+    "Yakin nih? 🤔",
+    "Padahal aku udah capek bikin ini... 🥺",
+    "Ayolah, buka aja! 🎁",
+    "Ini hari ULANG TAHUN lohh... 🎂",
+    "Masa gamau sih... 😢",
+    "Aku sedih kalau ga dibuka... 💔",
+    "PLEASEEE??? Ini spesial! 😭",
+    "Gabisa kabur dari surprise-mu 😜"
 ]
 
-const yesTeasePokes = [
-    "hmm try saying no first... see what happens 😏",
-    "go on, hit no... just once 👀",
-    "aren't you curious what happens? 😈",
-    "press no, I dare you 😏"
+// === Phase 2b: No button runaway messages ===
+const noRunawayMessages = [
+    "Hehe, tangkep aku! 😜",
+    "Terlalu lambat~ 💨",
+    "Bukan di sini! 🏃‍♀️",
+    "Gabisa nangkep aku! 😝",
+    "Hampirrr! Coba lagi~ 🎯",
+    "Buka aja langsung! 🎁",
+    "Aku terlalu cepat! ⚡",
+    "Nyerah aja, klik Buka! 🥰",
+    "Masih nyoba? 😏",
+    "Oke oke aku pelan— EH SIKE 😜"
 ]
 
-const runawayMessages = [
-    "Hehe, catch me! 😜",
-    "Too slow~ 💨",
-    "Nope, not here! 🏃‍♀️",
-    "You'll never catch me! 😝",
-    "Almost! Try again~ 🎯",
-    "Just open it already! 🎁",
-    "I'm too fast for you! ⚡",
-    "Give up and click Open it! 🥰",
-    "Still trying? 😏",
-    "Okay fine, I'll slow dow— SIKE 😜"
-]
-
-let runawayMsgIndex = 0
-
-let yesTeasedCount = 0
-
+// === State ===
+let phase = 1 // 1=yes runs, 2=no responds, 3=no runs, 4=yes returns
+let yesRunawayCount = 0
 let noClickCount = 0
-let runawayEnabled = false
+let noRunawayMsgIndex = 0
 let musicPlaying = true
+let noAutoMoveInterval = null
 
 const cuteGif = document.getElementById('cute-gif')
 const yesBtn = document.getElementById('yes-btn')
 const noBtn = document.getElementById('no-btn')
 const music = document.getElementById('bg-music')
 
-// Splash screen — user taps to enter, which allows music to play
+// === Splash screen ===
 document.getElementById('splash-btn').addEventListener('click', () => {
     const splash = document.getElementById('splash-screen')
     splash.classList.add('splash-exit')
 
-    // Start music (browser allows it because this is a real user gesture)
     music.volume = 0.3
     music.muted = false
     music.play().catch(() => {})
     musicPlaying = true
     document.getElementById('music-toggle').textContent = '🔊'
 
-    // Show main content and music toggle
     document.getElementById('main-content').style.display = ''
     document.getElementById('music-toggle').style.display = ''
 
-    // Remove splash after animation
     setTimeout(() => {
         splash.remove()
+        // Start phase 1: Yes button runs away
+        startYesRunaway()
     }, 800)
 })
 
@@ -89,99 +98,137 @@ function toggleMusic() {
     }
 }
 
-function handleYesClick() {
-    if (!runawayEnabled) {
-        // Tease her to try No first
-        const msg = yesTeasePokes[Math.min(yesTeasedCount, yesTeasePokes.length - 1)]
-        yesTeasedCount++
-        showTeaseMessage(msg)
-        return
+// ==========================================
+// PHASE 1: Yes button runs away
+// ==========================================
+function startYesRunaway() {
+    phase = 1
+    yesBtn.removeAttribute('onclick')
+    yesBtn.addEventListener('mouseover', runYesAway)
+    yesBtn.addEventListener('touchstart', runYesAway, { passive: true })
+
+    // Auto-move yes button every 2s so it keeps dodging
+    setInterval(() => {
+        if (phase === 1) runYesAway()
+    }, 2000 + Math.random() * 1500)
+
+    // Move it once immediately
+    runYesAway()
+}
+
+function runYesAway() {
+    if (phase !== 1) return
+
+    yesRunawayCount++
+    const margin = 20
+    const btnW = yesBtn.offsetWidth
+    const btnH = yesBtn.offsetHeight
+    const maxX = window.innerWidth - btnW - margin
+    const maxY = window.innerHeight - btnH - margin
+
+    const noRect = noBtn.getBoundingClientRect()
+    const musicBtn = document.getElementById('music-toggle')
+    const musicRect = musicBtn.getBoundingClientRect()
+
+    let randomX, randomY, attempts = 0
+
+    do {
+        randomX = Math.random() * maxX + margin / 2
+        randomY = Math.random() * maxY + margin / 2
+        const yesRect = {
+            left: randomX, top: randomY,
+            right: randomX + btnW, bottom: randomY + btnH
+        }
+        const overlapsNo = rectsOverlap(yesRect, noRect, 20)
+        const overlapsMusic = rectsOverlap(yesRect, musicRect, 10)
+        if (!overlapsNo && !overlapsMusic) break
+        attempts++
+    } while (attempts < 50)
+
+    yesBtn.style.position = 'fixed'
+    yesBtn.style.left = `${randomX}px`
+    yesBtn.style.top = `${randomY}px`
+    yesBtn.style.zIndex = '50'
+
+    // Cycle through messages
+    const msgIndex = yesRunawayCount % yesRunawayMessages.length
+    yesBtn.textContent = yesRunawayMessages[msgIndex]
+
+    // Show toast hints
+    if (yesRunawayCount === 3) {
+        showTeaseMessage("hmm... coba klik tombol yang lain dulu 👀")
     }
-    // Save music position so yes.html can resume from here
-    sessionStorage.setItem('musicTime', music.currentTime)
-    sessionStorage.setItem('musicPlaying', musicPlaying)
-    window.location.href = 'yes.html'
+    if (yesRunawayCount === 6) {
+        showTeaseMessage("iya yang itu... klik aja! 😏")
+    }
+
+    // After 8 attempts, move to phase 2
+    if (yesRunawayCount >= 8) {
+        phase = 2
+        yesBtn.removeEventListener('mouseover', runYesAway)
+        yesBtn.removeEventListener('touchstart', runYesAway)
+        // Keep yes button at last position, but make it unclickable in phase 2
+        yesBtn.style.pointerEvents = 'none'
+        yesBtn.style.opacity = '0.4'
+        yesBtn.textContent = "Buka Dong! 🎉"
+
+        // Enable no button clicking
+        noBtn.onclick = handleNoClick
+        showTeaseMessage("jangan klik yang ini ya~🥺")
+    }
 }
 
-function showTeaseMessage(msg) {
-    let toast = document.getElementById('tease-toast')
-    toast.textContent = msg
-    toast.classList.add('show')
-    clearTimeout(toast._timer)
-    toast._timer = setTimeout(() => toast.classList.remove('show'), 2500)
-}
-
+// ==========================================
+// PHASE 2: No button responds to clicks
+// ==========================================
 function handleNoClick() {
+    if (phase !== 2) return
     noClickCount++
 
-    // Cycle through guilt-trip messages
     const msgIndex = Math.min(noClickCount, noMessages.length - 1)
     noBtn.textContent = noMessages[msgIndex]
-
-    // Grow the Yes button bigger each time (capped for mobile)
-    const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize)
-    const maxFontSize = window.innerWidth < 600 ? 28 : 48
-    yesBtn.style.fontSize = `${Math.min(currentSize * 1.2, maxFontSize)}px`
-    const padY = Math.min(18 + noClickCount * 3, 35)
-    const padX = Math.min(45 + noClickCount * 6, window.innerWidth < 600 ? 50 : 90)
-    yesBtn.style.padding = `${padY}px ${padX}px`
-    yesBtn.style.maxWidth = '90vw'
-
-    // Shrink No button to contrast
-    if (noClickCount >= 2) {
-        const noSize = parseFloat(window.getComputedStyle(noBtn).fontSize)
-        noBtn.style.fontSize = `${Math.max(noSize * 0.85, 10)}px`
-    }
 
     // Swap gif through stages
     const gifIndex = Math.min(noClickCount, gifStages.length - 1)
     swapGif(gifStages[gifIndex])
 
-    // Runaway starts at click 5
-    if (noClickCount >= 5 && !runawayEnabled) {
-        enableRunaway()
-        runawayEnabled = true
+    // After 5 clicks, start phase 3: No runs away
+    if (noClickCount >= 5) {
+        phase = 3
+        startNoRunaway()
     }
 }
 
-function swapGif(src) {
-    cuteGif.style.opacity = '0'
-    setTimeout(() => {
-        cuteGif.src = src
-        cuteGif.style.opacity = '1'
-    }, 200)
-}
-
-function enableRunaway() {
-    // Disable clicking the No button so it can't grow Yes anymore
-    noBtn.removeAttribute('onclick')
-    noBtn.style.pointerEvents = 'auto'
-    noBtn.style.cursor = 'default'
-
-    // Make the button visible with purple style
+// ==========================================
+// PHASE 3: No button runs away
+// ==========================================
+function startNoRunaway() {
+    noBtn.onclick = null
     noBtn.classList.add('runaway-visible')
 
-    // Still run away on hover
-    noBtn.addEventListener('mouseover', runAway)
-    noBtn.addEventListener('touchstart', runAway, { passive: true })
+    noBtn.addEventListener('mouseover', runNoAway)
+    noBtn.addEventListener('touchstart', runNoAway, { passive: true })
+    runNoAway()
 
-    // Immediately move it once
-    runAway()
+    // Auto-move
+    let noMoveCount = 0
+    noAutoMoveInterval = setInterval(() => {
+        if (phase !== 3) return
+        noMoveCount++
+        runNoAway()
 
-    // Auto-move randomly every 1.5–3 seconds so it keeps dodging
-    setInterval(() => {
-        runAway()
-    }, 1500 + Math.random() * 1500)
+        // After 5 auto-moves, end phase 3 → phase 4
+        if (noMoveCount >= 5) {
+            clearInterval(noAutoMoveInterval)
+            phase = 4
+            endGame()
+        }
+    }, 1500 + Math.random() * 1000)
 }
 
-function rectsOverlap(r1, r2, padding) {
-    return !(r1.right + padding < r2.left ||
-             r1.left - padding > r2.right ||
-             r1.bottom + padding < r2.top ||
-             r1.top - padding > r2.bottom)
-}
+function runNoAway() {
+    if (phase !== 3) return
 
-function runAway() {
     const margin = 20
     const btnW = noBtn.offsetWidth
     const btnH = noBtn.offsetHeight
@@ -194,15 +241,12 @@ function runAway() {
 
     let randomX, randomY, attempts = 0
 
-    // Keep generating positions until we find one that doesn't overlap
     do {
         randomX = Math.random() * maxX + margin / 2
         randomY = Math.random() * maxY + margin / 2
         const noRect = {
-            left: randomX,
-            top: randomY,
-            right: randomX + btnW,
-            bottom: randomY + btnH
+            left: randomX, top: randomY,
+            right: randomX + btnW, bottom: randomY + btnH
         }
         const overlapsYes = rectsOverlap(noRect, yesRect, 20)
         const overlapsMusic = rectsOverlap(noRect, musicRect, 10)
@@ -215,7 +259,71 @@ function runAway() {
     noBtn.style.top = `${randomY}px`
     noBtn.style.zIndex = '50'
 
-    // Cycle through runaway messages
-    noBtn.textContent = runawayMessages[runawayMsgIndex % runawayMessages.length]
-    runawayMsgIndex++
+    noBtn.textContent = noRunawayMessages[noRunawayMsgIndex % noRunawayMessages.length]
+    noRunawayMsgIndex++
+}
+
+// ==========================================
+// PHASE 4: Yes button returns, big and clickable
+// ==========================================
+function endGame() {
+    const isMobile = window.innerWidth < 600
+
+    // Hide no button with fade
+    noBtn.style.transition = 'opacity 0.5s ease'
+    noBtn.style.opacity = '0'
+    setTimeout(() => { noBtn.style.display = 'none' }, 500)
+
+    // Put yes button back into the normal document flow (below GIF)
+    yesBtn.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
+    yesBtn.style.position = 'relative'
+    yesBtn.style.left = 'auto'
+    yesBtn.style.top = 'auto'
+    yesBtn.style.transform = 'none'
+    yesBtn.style.pointerEvents = 'auto'
+    yesBtn.style.opacity = '1'
+    yesBtn.style.fontSize = isMobile ? '1.8rem' : '2.4rem'
+    yesBtn.style.padding = isMobile ? '20px 44px' : '28px 64px'
+    yesBtn.style.maxWidth = '90vw'
+    yesBtn.style.zIndex = '10'
+    yesBtn.style.boxShadow = '0 8px 40px rgba(255, 105, 180, 0.5)'
+    yesBtn.textContent = "Buka Dong! 🎉"
+
+    // Make it clickable
+    yesBtn.addEventListener('click', () => {
+        sessionStorage.setItem('musicTime', music.currentTime)
+        sessionStorage.setItem('musicPlaying', musicPlaying)
+        window.location.href = 'yes.html'
+    })
+
+    // Happy gif
+    swapGif(gifStages[0])
+
+    showTeaseMessage("finally~ sekarang boleh dibuka! 🥰")
+}
+
+// ==========================================
+// Utility functions
+// ==========================================
+function showTeaseMessage(msg) {
+    let toast = document.getElementById('tease-toast')
+    toast.textContent = msg
+    toast.classList.add('show')
+    clearTimeout(toast._timer)
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 3000)
+}
+
+function swapGif(src) {
+    cuteGif.style.opacity = '0'
+    setTimeout(() => {
+        cuteGif.src = src
+        cuteGif.style.opacity = '1'
+    }, 200)
+}
+
+function rectsOverlap(r1, r2, padding) {
+    return !(r1.right + padding < r2.left ||
+             r1.left - padding > r2.right ||
+             r1.bottom + padding < r2.top ||
+             r1.top - padding > r2.bottom)
 }

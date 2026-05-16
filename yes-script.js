@@ -27,53 +27,68 @@ window.addEventListener('load', () => {
 })
 
 function launchConfetti() {
-    const colors = ['#FFD700', '#FF6B6B', '#A855F7', '#06B6D4', '#FF85A2', '#FFA500', '#fff', '#F472B6']
+    const colors = ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#FFC0CB', '#F472B6', '#fff', '#FFD1DC']
     const isMobile = window.innerWidth < 600
 
-    // Initial big burst (smaller on mobile)
+    // Initial big burst
     confetti({
-        particleCount: isMobile ? 80 : 200,
-        spread: isMobile ? 80 : 120,
+        particleCount: isMobile ? 60 : 200,
+        spread: isMobile ? 70 : 120,
         origin: { x: 0.5, y: 0.3 },
         colors
     })
 
-    // Continuous side cannons — less frequent and fewer on mobile
-    const count = isMobile ? 10 : 25
-    const interval = isMobile ? 700 : 400
+    // Phase 1: Dense burst for the first 5 seconds
+    const burstCount = isMobile ? 8 : 25
+    const burstInterval = isMobile ? 500 : 400
 
-    setInterval(() => {
+    const burstTimer = setInterval(() => {
         confetti({
-            particleCount: count,
+            particleCount: burstCount,
             angle: 60,
             spread: 55,
             origin: { x: 0, y: 0.6 },
             colors
         })
-
         confetti({
-            particleCount: count,
+            particleCount: burstCount,
             angle: 120,
             spread: 55,
             origin: { x: 1, y: 0.6 },
             colors
         })
-    }, interval)
+    }, burstInterval)
+
+    // Phase 2: After 5 seconds, switch to subtle mode
+    setTimeout(() => {
+        clearInterval(burstTimer)
+
+        const subtleCount = isMobile ? 4 : 15
+        const subtleInterval = isMobile ? 1500 : 600
+
+        setInterval(() => {
+            confetti({
+                particleCount: subtleCount,
+                angle: 60,
+                spread: isMobile ? 40 : 55,
+                origin: { x: 0, y: 0.6 },
+                colors
+            })
+            confetti({
+                particleCount: subtleCount,
+                angle: 120,
+                spread: isMobile ? 40 : 55,
+                origin: { x: 1, y: 0.6 },
+                colors
+            })
+        }, subtleInterval)
+    }, 5000)
 }
 
 // --- Slideshow ---
 function startSlideshow() {
     const polaroids = document.querySelectorAll('.polaroid')
-    const dots = document.querySelectorAll('.dot')
     if (polaroids.length === 0) return
-
-    // Click on dots to jump to slide
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            goToSlide(parseInt(dot.dataset.index), polaroids, dots)
-            resetAutoSlide(polaroids, dots)
-        })
-    })
 
     // Prev/Next buttons
     const prevBtn = document.getElementById('slide-prev')
@@ -82,16 +97,16 @@ function startSlideshow() {
     if (prevBtn) {
         prevBtn.addEventListener('click', () => {
             const prev = (currentSlide - 1 + polaroids.length) % polaroids.length
-            goToSlide(prev, polaroids, dots)
-            resetAutoSlide(polaroids, dots)
+            goToSlide(prev, polaroids)
+            resetAutoSlide(polaroids)
         })
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
             const next = (currentSlide + 1) % polaroids.length
-            goToSlide(next, polaroids, dots)
-            resetAutoSlide(polaroids, dots)
+            goToSlide(next, polaroids)
+            resetAutoSlide(polaroids)
         })
     }
 
@@ -113,13 +128,13 @@ function startSlideshow() {
                 if (diff > 0) {
                     // Swiped left → next
                     const next = (currentSlide + 1) % polaroids.length
-                    goToSlide(next, polaroids, dots)
+                    goToSlide(next, polaroids)
                 } else {
                     // Swiped right → prev
                     const prev = (currentSlide - 1 + polaroids.length) % polaroids.length
-                    goToSlide(prev, polaroids, dots)
+                    goToSlide(prev, polaroids)
                 }
-                resetAutoSlide(polaroids, dots)
+                resetAutoSlide(polaroids)
             }
         }, { passive: true })
     }
@@ -127,16 +142,15 @@ function startSlideshow() {
     // Auto-cycle every 4 seconds
     slideInterval = setInterval(() => {
         const next = (currentSlide + 1) % polaroids.length
-        goToSlide(next, polaroids, dots)
+        goToSlide(next, polaroids)
     }, 4000)
 }
 
-function goToSlide(index, polaroids, dots) {
+function goToSlide(index, polaroids) {
     // Remove all states
     polaroids.forEach(p => {
         p.classList.remove('active', 'prev')
     })
-    dots.forEach(d => d.classList.remove('active'))
 
     // Mark previous slide
     polaroids[currentSlide].classList.add('prev')
@@ -144,25 +158,91 @@ function goToSlide(index, polaroids, dots) {
     // Activate new slide
     currentSlide = index
     polaroids[currentSlide].classList.add('active')
-    dots[currentSlide].classList.add('active')
 }
 
-function resetAutoSlide(polaroids, dots) {
+function resetAutoSlide(polaroids) {
     clearInterval(slideInterval)
     slideInterval = setInterval(() => {
         const next = (currentSlide + 1) % polaroids.length
-        goToSlide(next, polaroids, dots)
+        goToSlide(next, polaroids)
     }, 4000)
 }
 
+// ==========================================
+// Music crossfade between sections
+// ==========================================
+let activeMusic = 'song1' // 'song1' or 'song2'
+const music1 = document.getElementById('bg-music')
+const music2 = document.getElementById('bg-music-2')
+music2.volume = 0
+
+function crossfadeTo(target) {
+    if (target === activeMusic) return
+    if (!musicPlaying) {
+        activeMusic = target
+        return
+    }
+
+    const fadeOut = target === 'song2' ? music1 : music2
+    const fadeIn = target === 'song2' ? music2 : music1
+    activeMusic = target
+
+    // Start the new song
+    fadeIn.volume = 0
+    fadeIn.play().catch(() => {})
+
+    // Smooth crossfade over 1 second
+    const steps = 20
+    const interval = 50 // 20 steps × 50ms = 1 second
+    let step = 0
+
+    const fadeTimer = setInterval(() => {
+        step++
+        const progress = step / steps
+        fadeOut.volume = Math.max(0, 0.3 * (1 - progress))
+        fadeIn.volume = Math.min(0.3, 0.3 * progress)
+
+        if (step >= steps) {
+            clearInterval(fadeTimer)
+            fadeOut.pause()
+        }
+    }, interval)
+}
+
+// Watch for photos section scroll
+const photosSection = document.querySelector('.photos-section')
+const heroSection = document.querySelector('.hero-section')
+
+if (photosSection) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.target === photosSection && entry.isIntersecting) {
+                crossfadeTo('song2')
+            }
+        })
+    }, { threshold: 0.3 })
+
+    const heroObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.target === heroSection && entry.isIntersecting) {
+                crossfadeTo('song1')
+            }
+        })
+    }, { threshold: 0.3 })
+
+    observer.observe(photosSection)
+    if (heroSection) heroObserver.observe(heroSection)
+}
+
 function toggleMusic() {
-    const music = document.getElementById('bg-music')
+    const current = activeMusic === 'song1' ? music1 : music2
     if (musicPlaying) {
-        music.pause()
+        music1.pause()
+        music2.pause()
         musicPlaying = false
         document.getElementById('music-toggle').textContent = '🔇'
     } else {
-        music.play()
+        current.play()
         musicPlaying = true
         document.getElementById('music-toggle').textContent = '🔊'
     }
