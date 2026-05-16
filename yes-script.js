@@ -280,73 +280,90 @@ if (photosSection) {
 
 function toggleMusic() {
     const current = activeMusic === 'song1' ? music1 : music2
-    const vn = document.getElementById('voice-note')
     if (musicPlaying) {
         music1.pause()
         music2.pause()
-        if (vn) vn.pause()
         musicPlaying = false
         document.getElementById('music-toggle').textContent = '🔇'
     } else {
-        if (vnPlaying && vn) {
-            vn.play()
-        } else {
-            current.play()
+        // If VN is playing, resume music at low volume
+        if (vnPlaying) {
+            current.volume = 0.03
         }
+        current.play()
         musicPlaying = true
         document.getElementById('music-toggle').textContent = '🔊'
     }
 }
 
 // ==========================================
-// Voice Note — plays when scrolled to bottom
+// Voice Note — plays when scrolled to letter bottom
 // ==========================================
 let vnPlaying = false
-let vnTriggered = false
+let vnReady = true
 
 function setupVoiceNote() {
     const vn = document.getElementById('voice-note')
     if (!vn) return
 
-    window.addEventListener('scroll', () => {
-        if (vnTriggered) return
+    let wasAtBottom = false
 
+    window.addEventListener('scroll', () => {
         const scrollTop = window.scrollY || document.documentElement.scrollTop
         const scrollHeight = document.documentElement.scrollHeight
         const clientHeight = window.innerHeight
         const distanceToBottom = scrollHeight - scrollTop - clientHeight
+        const atBottom = distanceToBottom < 80
 
-        if (distanceToBottom < 80) {
-            vnTriggered = true
+        if (atBottom && !wasAtBottom && vnReady && !vnPlaying) {
+            vnReady = false
             playVoiceNote()
         }
+
+        // Reset ready when user scrolls away from bottom (>300px)
+        if (!atBottom && distanceToBottom > 300 && !vnPlaying) {
+            vnReady = true
+        }
+
+        wasAtBottom = atBottom
     })
 
-    // When VN ends, restore background music volume
     vn.addEventListener('ended', () => {
         vnPlaying = false
+        vnReady = true
         restoreBgMusic()
     })
 }
 
 function playVoiceNote() {
     const vn = document.getElementById('voice-note')
-    if (!vn || !musicPlaying) return
+    if (!vn) return
 
     vnPlaying = true
 
-    // Lower bg music to 10%
     const currentBg = activeMusic === 'song1' ? music1 : music2
-    fadeBgVolume(currentBg, currentBg.volume, 0.03, 800)
+    if (musicPlaying) {
+        fadeBgVolume(currentBg, currentBg.volume, 0, 600)
+        setTimeout(() => {
+            if (vnPlaying) {
+                currentBg.pause()
+                document.getElementById('music-toggle').textContent = '🔇'
+            }
+        }, 650)
+    }
 
-    // Play voice note at good volume
+    vn.currentTime = 0
     vn.volume = 0.9
     vn.play().catch(() => {})
 }
 
 function restoreBgMusic() {
+    if (!musicPlaying) return
     const currentBg = activeMusic === 'song1' ? music1 : music2
-    fadeBgVolume(currentBg, currentBg.volume, 0.3, 800)
+    currentBg.volume = 0
+    currentBg.play().catch(() => {})
+    fadeBgVolume(currentBg, 0, 0.3, 800)
+    document.getElementById('music-toggle').textContent = '🔊'
 }
 
 function fadeBgVolume(audio, from, to, duration) {
@@ -365,7 +382,8 @@ function fadeBgVolume(audio, from, to, duration) {
     }, interval)
 }
 
-// Initialize voice note after page loads
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(setupVoiceNote, 1000)
 })
+
+
