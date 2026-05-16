@@ -280,14 +280,92 @@ if (photosSection) {
 
 function toggleMusic() {
     const current = activeMusic === 'song1' ? music1 : music2
+    const vn = document.getElementById('voice-note')
     if (musicPlaying) {
         music1.pause()
         music2.pause()
+        if (vn) vn.pause()
         musicPlaying = false
         document.getElementById('music-toggle').textContent = '🔇'
     } else {
-        current.play()
+        if (vnPlaying && vn) {
+            vn.play()
+        } else {
+            current.play()
+        }
         musicPlaying = true
         document.getElementById('music-toggle').textContent = '🔊'
     }
 }
+
+// ==========================================
+// Voice Note — plays when scrolled to bottom
+// ==========================================
+let vnPlaying = false
+let vnTriggered = false
+
+function setupVoiceNote() {
+    const vn = document.getElementById('voice-note')
+    if (!vn) return
+
+    window.addEventListener('scroll', () => {
+        if (vnTriggered) return
+
+        const scrollTop = window.scrollY || document.documentElement.scrollTop
+        const scrollHeight = document.documentElement.scrollHeight
+        const clientHeight = window.innerHeight
+        const distanceToBottom = scrollHeight - scrollTop - clientHeight
+
+        if (distanceToBottom < 80) {
+            vnTriggered = true
+            playVoiceNote()
+        }
+    })
+
+    // When VN ends, restore background music volume
+    vn.addEventListener('ended', () => {
+        vnPlaying = false
+        restoreBgMusic()
+    })
+}
+
+function playVoiceNote() {
+    const vn = document.getElementById('voice-note')
+    if (!vn || !musicPlaying) return
+
+    vnPlaying = true
+
+    // Lower bg music to 10%
+    const currentBg = activeMusic === 'song1' ? music1 : music2
+    fadeBgVolume(currentBg, currentBg.volume, 0.03, 800)
+
+    // Play voice note at good volume
+    vn.volume = 0.9
+    vn.play().catch(() => {})
+}
+
+function restoreBgMusic() {
+    const currentBg = activeMusic === 'song1' ? music1 : music2
+    fadeBgVolume(currentBg, currentBg.volume, 0.3, 800)
+}
+
+function fadeBgVolume(audio, from, to, duration) {
+    const steps = 20
+    const interval = duration / steps
+    const diff = to - from
+    let step = 0
+
+    const timer = setInterval(() => {
+        step++
+        audio.volume = Math.max(0, Math.min(1, from + (diff * (step / steps))))
+        if (step >= steps) {
+            clearInterval(timer)
+            audio.volume = to
+        }
+    }, interval)
+}
+
+// Initialize voice note after page loads
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(setupVoiceNote, 1000)
+})
