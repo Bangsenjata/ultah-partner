@@ -257,6 +257,69 @@ body.birthday-reveal {
     background-image: none;
 }
 
+/* ===== Loading Screen ===== */
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: radial-gradient(ellipse at center, #2d0a1e 0%, #1a0610 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.loading-screen.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-emoji {
+    font-size: 4rem;
+    animation: loadingPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2) rotate(5deg); }
+}
+
+.loading-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 16px;
+    animation: loadingFade 2s ease-in-out infinite;
+}
+
+@keyframes loadingFade {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.loading-bar-track {
+    width: 200px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin: 20px auto 0;
+    overflow: hidden;
+}
+
+.loading-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #FF69B4, #FF1493);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
 /* Photo collage background */
 .collage-bg {
     position: fixed;

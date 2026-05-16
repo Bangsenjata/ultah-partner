@@ -2,10 +2,54 @@ let musicPlaying = false
 let currentSlide = 0
 let slideInterval = null
 
-window.addEventListener('load', () => {
-    launchConfetti()
-    startSlideshow()
+// ===== Loading screen logic =====
+document.addEventListener('DOMContentLoaded', () => {
+    const loadingScreen = document.getElementById('loading-screen')
+    const loadingBar = document.getElementById('loading-bar')
+    const images = document.querySelectorAll('img')
+    let loaded = 0
+    const total = images.length
 
+    function updateProgress() {
+        loaded++
+        const percent = Math.min(Math.round((loaded / total) * 100), 100)
+        if (loadingBar) loadingBar.style.width = percent + '%'
+
+        if (loaded >= total) {
+            revealPage()
+        }
+    }
+
+    function revealPage() {
+        // Small delay for polish
+        setTimeout(() => {
+            if (loadingScreen) loadingScreen.classList.add('loaded')
+            launchConfetti()
+            startSlideshow()
+            startMusic()
+        }, 400)
+    }
+
+    // Track each image
+    images.forEach(img => {
+        if (img.complete) {
+            updateProgress()
+        } else {
+            img.addEventListener('load', updateProgress)
+            img.addEventListener('error', updateProgress)
+        }
+    })
+
+    // Fallback: reveal after 8 seconds max
+    setTimeout(() => {
+        if (!loadingScreen.classList.contains('loaded')) {
+            if (loadingBar) loadingBar.style.width = '100%'
+            revealPage()
+        }
+    }, 8000)
+})
+
+function startMusic() {
     // Resume music from where it left off on the previous page
     const music = document.getElementById('bg-music')
     music.volume = 0.3
@@ -24,7 +68,7 @@ window.addEventListener('load', () => {
         musicPlaying = false
         document.getElementById('music-toggle').textContent = '🔇'
     }
-})
+}
 
 function launchConfetti() {
     const colors = ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093', '#FFC0CB', '#F472B6', '#fff', '#FFD1DC']
